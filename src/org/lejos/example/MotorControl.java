@@ -9,8 +9,7 @@ public class MotorControl {
 	NXTRegulatedMotor mfar;
 	int nearspeed = 200;
 	int farspeed = 200;
-	
-	double[] nollat = {Math.cos(Math.PI/4) * 16 - 15, Math.sin(Math.PI / 4) * 16};
+	int gearRatio = 3;
 	
 	public MotorControl(MotorPort near, MotorPort far) {
 		mnear = new NXTRegulatedMotor(near);
@@ -20,27 +19,20 @@ public class MotorControl {
 	}
 	
 	public MotorControl() {
-		this(MotorPort.B, MotorPort.C);
+		this(MotorPort.A, MotorPort.C);
 	}
 	
-	public void rotateTo(int near, int far) {
-//		int ns = Math.abs(mnear.getPosition() - near);
-//		int fs = Math.abs(mfar.getPosition() - far);
-//		mnear.setSpeed(ns);
-//		mfar.setSpeed(fs);
-		mnear.rotateTo(near, true);
-		mfar.rotateTo(far, true);
+	public void rotateTo(int near, int far, boolean immediateReturn) {
+		mnear.rotateTo(near * gearRatio, true);
+		mfar.rotateTo(far * gearRatio, immediateReturn);
 	}
 	
-	public void moveTo(float x, float y) {
-		double[] angles = KineMath.math(x, y);
-		rotateTo((int)angles[0], (int)angles[1]);
+	public void moveTo(float x, float y, boolean immediateReturn) {
+		x+=15; y+=15;
+		double[] angles = KineMath.etsikulmat(x, y);
+		rotateTo((int)(angles[0]*gearRatio), (int)(angles[1]*gearRatio), immediateReturn);
 	}
 	public boolean isMoving() {
 		return mnear.isMoving() || mfar.isMoving();
-	}
-	@Override
-	public String toString() {
-		return "near: " + mnear.getTachoCount() + " \n far: " + mfar.getTachoCount();
 	}
 }

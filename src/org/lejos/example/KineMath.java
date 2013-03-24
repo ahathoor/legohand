@@ -1,51 +1,55 @@
 package org.lejos.example;
 
 public class KineMath {
-	static double R1 = 16;
-	static double R2 = 15;
-	static double alkukulmaA = Math.PI/4;
-	static double alkukulmaB = 0;
-	static double[] nolla = {Math.cos(alkukulmaA) * R1 - Math.cos(alkukulmaB) * R2, Math.sin(alkukulmaA) * R1 + Math.sin(alkukulmaB) * R2};
-	public static double[] math(double x, double y) {
 
-		x+=nolla[0];
-		y+=nolla[1];
-		
+    static double r2 = 11.85*0.8;
+    static double r1 = 16;
+    
+    public static void main(String[] args) {
+    	etsikulmat(0, r1+r2);
+    }
+    
+    public static double[] etsikulmat(double x, double y) {
 
+        //kulma (x,y) (0,0)
+        double min = Math.PI - Math.atan2(y, x);
+        double max = min - 2*Math.PI;
 
-		double Z = (R2 * R2 - R1 * R1 - x * x - y * y) / (-2 * x);
-		double W = y / -x;
+        double search = 0;
 
-		// quadratic part
+        for (int i = 0; i < 70; i++) {
+            if(Math.abs(min - max) == 0)
+                break;
+            search = (min + max) / 2;
+            double k1 = Math.abs(distToOrigo(kärki(x, y, r1, (search + min) / 2)) - r2);
+            double k2 = Math.abs(distToOrigo(kärki(x, y, r1, (search + max) / 2)) - r2);
+            if (k1 < k2) {
+                max = search;
+            } else {
+                min = search;
+            }
+        }
+        double[] betweenPoint = kärki(x, y, r1, search);
+        
+        double k1 = search+Math.PI/2;
+        double k2 = Math.atan2(betweenPoint[1], betweenPoint[0]);
+//        System.out.println("Eka kulma= " + Math.toDegrees(cleanAngle(k1)));
+//        System.out.println("Toka kulma= " + Math.toDegrees(cleanAngle(k2)));
+    	return new double[] {Math.toDegrees(k1),Math.toDegrees(k2)};
+    }
+    
+    public static double cleanAngle(double a) {
+    	while (a<-Math.PI/4) a+= Math.PI*2;
+    	return a;
+    }
 
-		double a = 1 + W * W;
-		double b = 2 * Z * W;
-		double c = Z * Z - R1 * R1;
+    public static double distToOrigo(double[] piste) {
+        return Math.sqrt(piste[0] * piste[0] + piste[1] * piste[1]);
+    }
 
-		double det = b * b - 4 * a * c;
-		double sy1 = (-b + Math.sqrt(det)) / (2 * a);
-		double sx1 = Math.sqrt(R1 * R1 - sy1 * sy1);
-
-//		sy1 = (-b - Math.sqrt(det)) / (2 * a);
-//		sx1 = Math.sqrt(R1 * R1 - sy1 * sy1);
-		
-		double alpha = Math.asin(sy1/R1);
-//		System.out.println(Math.toDegrees(alpha));
-		double beta = alpha + Math.asin((y-sy1)/R2);
-//		System.out.println(Math.toDegrees(beta));
-		
-		return new double[] {Math.toDegrees(alkukulmaA - alpha), -Math.toDegrees(beta - alkukulmaA)};
-
-
-//		System.out.println("Second solution y = " + sy2 + "; x = " + sx2);
-	}
-
-	public static void main(String[] args) {
-		double[] a = nolla;
-		System.out.println(a[0]);System.out.println(a[1]);
-		a = math(-12,12);
-		System.out.println(a[0]);System.out.println(a[1]);
-		a = math(-13,13);
-		System.out.println(a[0]);System.out.println(a[1]);
-	}
+    public static double[] kärki(double x, double y, double r, double angle) {
+        double rx = x + Math.cos(angle) * r;
+        double ry = y - Math.sin(angle) * r;
+        return new double[]{rx, ry};
+    }
 }
