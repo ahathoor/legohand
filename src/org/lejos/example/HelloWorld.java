@@ -13,63 +13,24 @@ public class HelloWorld {
 		Thread panicbutton = new Thread() {
 			@Override
 			public void run() {
-				while(true)
-				if (Button.ESCAPE.isPressed()) {
-					Sound.beep();
-					System.exit(0);
-				}
+				while (true)
+					if (Button.ESCAPE.isPressed()) {
+						Sound.beep();
+						System.exit(0);
+					}
 			}
 		};
 		panicbutton.start();
-		
-//		NXTRegulatedMotor[] m = {Motor.A,Motor.B,Motor.C};
-//		int i = 0;
-//		while (!Button.ESCAPE.isPressed()) {
-//			NXTRegulatedMotor s = m[i%3];
-//			s.setSpeed(100);
-//			if(Button.ENTER.isPressed()) 
-//				s.stop();
-//			if (Button.RIGHT.isPressed())
-//				s.rotate(180*3);
-//			if(Button.LEFT.isPressed())
-//				s.rotate(-180*3);
-//		}
-//		System.exit(0);
+
 		MotorControl m = new MotorControl();
-		float s = 0.3f;
-		for (int k = 5; k < 13; k++) {
-			for (float i = 0; i < k; i += s) {
-				m.moveTo(0, i);
-				while (m.isMoving())
-					;
-			}
-			for (float i = 0; i < k; i += s) {
-				m.moveTo(-i, k);
-				while (m.isMoving())
-					;
-			}
-
-			for (float i = 0; i < k; i += s) {
-				m.moveTo(-k, k - i);
-				while (m.isMoving())
-					;
-			}
-
-			for (float i = 0; i < k; i += s) {
-				m.moveTo(-k + i, 0);
-				while (m.isMoving())
-					;
-			}
+		// m.rotateTo(45, 45, false);
+		// m.rotateTo(0,0,false);
+		// System.exit(0);
+		for (int i = 0; i < 10; i++) {
+			m.moveTo(0, 25-i, false);
+			m.moveTo(25-i, 0, false);
 		}
+		m.rotateTo(0, 0, false);
 
-		m.moveTo(0, 0);
-		while (m.isMoving())
-			;
-		Sound.beep();
-		System.exit(0);
-//		while (!Button.ENTER.isPressed()) {
-//			System.out.println(m.toString());
-//			Delay.msDelay(100);
-//		}
 	}
 }

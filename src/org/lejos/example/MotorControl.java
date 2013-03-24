@@ -1,5 +1,6 @@
 package org.lejos.example;
 
+import lejos.nxt.Button;
 import lejos.nxt.MotorPort;
 import lejos.nxt.NXTRegulatedMotor;
 
@@ -22,15 +23,14 @@ public class MotorControl {
 		this(MotorPort.A, MotorPort.C);
 	}
 	
-	public void rotateTo(int near, int far, boolean immediateReturn) {
-		mnear.rotateTo(near * gearRatio, true);
-		mfar.rotateTo(far * gearRatio, immediateReturn);
+	public void rotateTo(double near, double far, boolean immediateReturn) {
+		mnear.rotateTo(-(int)(near * gearRatio), true);
+		mfar.rotateTo(-(int)(far * gearRatio), immediateReturn);
 	}
 	
 	public void moveTo(float x, float y, boolean immediateReturn) {
-		x+=15; y+=15;
 		double[] angles = KineMath.etsikulmat(x, y);
-		rotateTo((int)(angles[0]*gearRatio), (int)(angles[1]*gearRatio), immediateReturn);
+		rotateTo(angles[0], angles[1], immediateReturn);
 	}
 	public boolean isMoving() {
 		return mnear.isMoving() || mfar.isMoving();
