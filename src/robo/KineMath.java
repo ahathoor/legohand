@@ -2,24 +2,18 @@ package robo;
 
 public class KineMath {
 
-	static double r2 = 11.85 * 0.8;
-	static double r1 = 16;
-
-	public static double getR1() {
-		return r1;
-	}
-
-	public static double getR2() {
-		return r2;
-	}
-
 	public static void main(String[] args) {
+		KineMathTest kt = new KineMathTest();
+		kt.run();
 	}
-	
-	public static double[] binSearchPointWithDist(double[] xy, double dist) {
+	public static double bestAngleInDeg(double[] xy, double dist) {
+		return Math.toDegrees(bestAngle(xy, dist));
+	}
+	public static double bestAngle(double[] xy, double dist) {
 		/**
-		 * Searches for  a point distance dist from (x,y) that is as close as possible to (0,0)
+		 * Searches the best angle to go a distance dist from (x,y) so that we get as close as possible to (0,0)
 		 */
+		xy = new double[] {xy[0] , -xy[1] };
 		double min = Math.PI - Math.atan2(xy[1], xy[0]);
 		double max = min - 2 * Math.PI;
 		double search = 0;
@@ -37,6 +31,11 @@ public class KineMath {
 				min = search;
 			}
 		}
+
+		return positivifyAngle(search);
+	}
+	public static double[] binSearchPointWithDist(double[] xy, double dist) {
+		double search = bestAngle(xy, dist);
 		return new double[] {xy[0] + Math.cos(search)*dist, xy[1] + Math.sin(search)*dist};
 	}
 	
@@ -44,19 +43,17 @@ public class KineMath {
 		return Math.atan2(xy2[1] - xy1[1], xy2[0] - xy1[0]);
 	}
 
-	public static double[] etsikulmat(double[] xy) {
-
-		System.out.println("x : " + xy[0] + "   y : " + xy[1]);
+	public static double[] etsikulmat(double[] xy, double r2) {
 		
 		double[] betweenPoint = binSearchPointWithDist(xy, r2);
-		double k1 = Math.atan2(betweenPoint[1], betweenPoint[0]);
-
-		double k2 = Math.atan2(xy[1] - betweenPoint[1], xy[0] - betweenPoint[0]) - k1;
+		double k1 = angleBetween(new double[] {0,0}, betweenPoint);
+		double k2 = angleBetween(betweenPoint, xy);
+		k2 -= k1;
 		return new double[] { Math.toDegrees(k1), Math.toDegrees(k2) };
 	}
 
-	public static double cleanAngle(double a) {
-		while (a < -Math.PI / 4)
+	public static double positivifyAngle(double a) {
+		while (a < 0)
 			a += Math.PI * 2;
 		return a;
 	}

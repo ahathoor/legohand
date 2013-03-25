@@ -12,6 +12,51 @@ public class KineMathTest {
 		testBinSearchStraightDown();
 		testBinSearchStraightLeft();
 		testBinSearchStraightRight();
+		testEtsiKulmatUp();
+		testBestAngle();
+	}
+	public void testBestAngle() {
+		double[] p = {0,100};
+		double angle = KineMath.bestAngleInDeg(p, 10);
+		assertEqual("Best angle straight up", 270, angle, 0.1);
+		
+		p = new double[] {0,-100};
+		angle = KineMath.bestAngleInDeg(p, 10);
+		assertEqual("Best angle straight down", 90, angle, 0.1);
+		
+
+		p = new double[] {-100,0};
+		angle = KineMath.bestAngleInDeg(p, 10);
+		assertEqual("Best angle straight left", 0, angle, 0.1);
+		
+
+		p = new double[] {100,0};
+		angle = KineMath.bestAngleInDeg(p, 10);
+		assertEqual("Best angle straight right", 180, angle, 0.1);
+		
+
+		p = new double[] {100,100};
+		angle = KineMath.bestAngleInDeg(p, 10);
+		assertEqual("Best angle up right", 225, angle, 0.1);		
+
+		p = new double[] {-100,100};
+		angle = KineMath.bestAngleInDeg(p, 10);
+		assertEqual("Best angle up left", 315, angle, 0.1);
+
+		p = new double[] {-100,-100};
+		angle = KineMath.bestAngleInDeg(p, 10);
+		assertEqual("Best angle down left", 45, angle, 0.1);
+		
+
+		p = new double[] {100,-100};
+		angle = KineMath.bestAngleInDeg(p, 10);
+		assertEqual("Best angle down right", 135, angle, 0.1);
+	}
+	public void testEtsiKulmatUp() {
+		double[] p = {0,10};
+		double[] ang = KineMath.etsikulmat(p, 5);
+		assertEqual("etsiKulmat straight up", 90, ang[0], 0.1);
+		assertEqual("etsiKulmat straight up", 0, ang[1], 0.1);
 	}
 	public void testBinSearchStraightUp() {
 		double[] p = {0,10};
