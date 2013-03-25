@@ -23,13 +23,9 @@ public class RoboHand {
 		panicbutton.start();
 
 		MotorControl m = new MotorControl();
-		// m.rotateTo(45, 45, false);
-		// m.rotateTo(0,0,false);
-		// System.exit(0);
-		for (int i = 0; i < 10; i++) {
-			m.moveTo(0, 25-i, false);
-			m.moveTo(25-i, 0, false);
-		}
+		m.moveTo(16,16,false);
+
+		m.moveTo(28,28,false);
 		m.rotateTo(0, 0, false);
 
 	}

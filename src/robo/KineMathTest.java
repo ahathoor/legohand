@@ -76,6 +76,14 @@ public class KineMathTest {
 		ang = KineMath.etsikulmat(p, 5, 5);
 		assertEqual("etsiKulmat L up right", 0, ang[0], 0.1);
 		assertEqual("etsiKulmat L up right'", 90, ang[1], 0.1);
+		
+
+		double armFromSwiwel = 16;
+		double armFromOrigo = Math.sqrt(15 * 15 + 4 * 4);
+		p = new double[] {16,0};
+		ang = KineMath.etsikulmat(p, armFromSwiwel, armFromOrigo);
+		assertEqual("Particular test case left", 0, ang[0], 0.1);
+		assertEqual("Particular test case left", 0, ang[1], 0.1);
 	}
 	public void testBinSearchStraightUp() {
 		double[] p = {0,10};
