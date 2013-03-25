@@ -12,56 +12,75 @@ public class KineMathTest {
 		testBinSearchStraightDown();
 		testBinSearchStraightLeft();
 		testBinSearchStraightRight();
-		testEtsiKulmatUp();
+		testEtsiKulmat();
 		testBestAngle();
 	}
 	public void testBestAngle() {
 		double[] p = {0,100};
-		double angle = KineMath.bestAngleInDeg(p, 10);
+		double angle = KineMath.bestAngleInDeg(p, 10, 90);
 		assertEqual("Best angle straight up", 270, angle, 0.1);
 		
 		p = new double[] {0,-100};
-		angle = KineMath.bestAngleInDeg(p, 10);
+		angle = KineMath.bestAngleInDeg(p, 10, 90);
 		assertEqual("Best angle straight down", 90, angle, 0.1);
 		
 
 		p = new double[] {-100,0};
-		angle = KineMath.bestAngleInDeg(p, 10);
+		angle = KineMath.bestAngleInDeg(p, 10, 90);
 		assertEqual("Best angle straight left", 0, angle, 0.1);
 		
 
 		p = new double[] {100,0};
-		angle = KineMath.bestAngleInDeg(p, 10);
+		angle = KineMath.bestAngleInDeg(p, 10, 90);
 		assertEqual("Best angle straight right", 180, angle, 0.1);
 		
 
-		p = new double[] {100,100};
-		angle = KineMath.bestAngleInDeg(p, 10);
+		p = new double[] {25,25};
+		angle = KineMath.bestAngleInDeg(p, 5,5);
 		assertEqual("Best angle up right", 225, angle, 0.1);		
 
 		p = new double[] {-100,100};
-		angle = KineMath.bestAngleInDeg(p, 10);
+		angle = KineMath.bestAngleInDeg(p, 7,3);
 		assertEqual("Best angle up left", 315, angle, 0.1);
 
 		p = new double[] {-100,-100};
-		angle = KineMath.bestAngleInDeg(p, 10);
+		angle = KineMath.bestAngleInDeg(p, 10,1);
 		assertEqual("Best angle down left", 45, angle, 0.1);
 		
 
 		p = new double[] {100,-100};
-		angle = KineMath.bestAngleInDeg(p, 10);
+		angle = KineMath.bestAngleInDeg(p, 10,1);
 		assertEqual("Best angle down right", 135, angle, 0.1);
 	}
-	public void testEtsiKulmatUp() {
+	public void testEtsiKulmat() {
 		double[] p = {0,10};
-		double[] ang = KineMath.etsikulmat(p, 5);
+		double[] ang = KineMath.etsikulmat(p, 5, 0);
 		assertEqual("etsiKulmat straight up", 90, ang[0], 0.1);
 		assertEqual("etsiKulmat straight up", 0, ang[1], 0.1);
+		
+
+		p = new double[] {0,-10};
+		ang = KineMath.etsikulmat(p, 5, 0);
+		assertEqual("etsiKulmat straight down", 270, ang[0], 0.1);
+		assertEqual("etsiKulmat straight down", 0, ang[1], 0.1);
+		p = new double[] {-10,0};
+		ang = KineMath.etsikulmat(p, 5, 0);
+		assertEqual("etsiKulmat straight left", 180, ang[0], 0.1);
+		assertEqual("etsiKulmat straight left", 0, ang[1], 0.1);
+		p = new double[] {10,0};
+		ang = KineMath.etsikulmat(p, 5, 0);
+		assertEqual("etsiKulmat straight right", 0, ang[0], 0.1);
+		assertEqual("etsiKulmat straight right", 0, ang[1], 0.1);
+
+		p= new double[] {5,5};
+		ang = KineMath.etsikulmat(p, 5, 5);
+		assertEqual("etsiKulmat L up right", 0, ang[0], 0.1);
+		assertEqual("etsiKulmat L up right'", 90, ang[1], 0.1);
 	}
 	public void testBinSearchStraightUp() {
 		double[] p = {0,10};
 		double dist = 5;
-		double[] rp = KineMath.binSearchPointWithDist(p, dist);
+		double[] rp = KineMath.binSearchPointWithDist(p, dist, 0);
 		assertEqual("bintest straight up", 0, rp[0], 0.1);
 		assertEqual("bintest straight up", 5, rp[1], 0.1);
 	}
@@ -69,21 +88,21 @@ public class KineMathTest {
 	public void testBinSearchStraightDown() {
 		double[] p = {0,-10};
 		double dist = 5;
-		double[] rp = KineMath.binSearchPointWithDist(p, dist);
+		double[] rp = KineMath.binSearchPointWithDist(p, dist, 0);
 		assertEqual("bintest straight down", 0, rp[0], 0.1);
 		assertEqual("bintest straight down", -5, rp[1], 0.1);
 	}
 	public void testBinSearchStraightRight() {
 		double[] p = {12, 0};
 		double dist = 5;
-		double[] rp = KineMath.binSearchPointWithDist(p, dist);
+		double[] rp = KineMath.binSearchPointWithDist(p, dist, 0);
 		assertEqual("bintest straight right", 12-5, rp[0], 0.1);
 		assertEqual("bintest straight right", 0, rp[1], 0.1);
 	}
 	public void testBinSearchStraightLeft() {
 		double[] p = {-12, 0};
 		double dist = 5;
-		double[] rp = KineMath.binSearchPointWithDist(p, dist);
+		double[] rp = KineMath.binSearchPointWithDist(p, dist, 0);
 		assertEqual("bintest straight left", -12+5, rp[0], 0.1);
 		assertEqual("bintest straight left", 0, rp[1], 0.1);
 	}

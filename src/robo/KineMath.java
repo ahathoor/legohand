@@ -6,12 +6,13 @@ public class KineMath {
 		KineMathTest kt = new KineMathTest();
 		kt.run();
 	}
-	public static double bestAngleInDeg(double[] xy, double dist) {
-		return Math.toDegrees(bestAngle(xy, dist));
+	public static double bestAngleInDeg(double[] xy, double dist, double target) {
+		return Math.toDegrees(bestAngle(xy, dist, target));
 	}
-	public static double bestAngle(double[] xy, double dist) {
+	public static double bestAngle(double[] xy, double dfromxy, double target) {
 		/**
-		 * Searches the best angle to go a distance dist from (x,y) so that we get as close as possible to (0,0)
+		 * Searches the best angle to go a distance <b>dist</b> from (x,y) so that distance from 
+		 * origo is as close to target as possible
 		 */
 		xy = new double[] {xy[0] , -xy[1] };
 		double min = Math.PI - Math.atan2(xy[1], xy[0]);
@@ -22,9 +23,9 @@ public class KineMath {
 				break;
 			search = (min + max) / 2;
 			double k1 = Math
-					.abs(distToOrigo(kärki(xy[0], xy[1], dist, (search + min) / 2)));
+					.abs(distToOrigo(kärki(xy[0], xy[1], dfromxy, (search + min) / 2)) - target);
 			double k2 = Math
-					.abs(distToOrigo(kärki(xy[0], xy[1], dist, (search + max) / 2)));
+					.abs(distToOrigo(kärki(xy[0], xy[1], dfromxy, (search + max) / 2)) - target);
 			if (k1 < k2) {
 				max = search;
 			} else {
@@ -34,26 +35,26 @@ public class KineMath {
 
 		return positivifyAngle(search);
 	}
-	public static double[] binSearchPointWithDist(double[] xy, double dist) {
-		double search = bestAngle(xy, dist);
-		return new double[] {xy[0] + Math.cos(search)*dist, xy[1] + Math.sin(search)*dist};
+	public static double[] binSearchPointWithDist(double[] xy, double dfromxy, double target) {
+		double search = bestAngle(xy, dfromxy, target);
+		return new double[] {xy[0] + Math.cos(search)*dfromxy, xy[1] + Math.sin(search)*dfromxy};
 	}
 	
 	public static double angleBetween(double[] xy1, double[] xy2) {
 		return Math.atan2(xy2[1] - xy1[1], xy2[0] - xy1[0]);
 	}
 
-	public static double[] etsikulmat(double[] xy, double r2) {
+	public static double[] etsikulmat(double[] xy, double armFromSwiwel, double armFromOrigo) {
 		
-		double[] betweenPoint = binSearchPointWithDist(xy, r2);
+		double[] betweenPoint = binSearchPointWithDist(xy, armFromSwiwel, armFromOrigo);
 		double k1 = angleBetween(new double[] {0,0}, betweenPoint);
 		double k2 = angleBetween(betweenPoint, xy);
 		k2 -= k1;
-		return new double[] { Math.toDegrees(k1), Math.toDegrees(k2) };
+		return new double[] { Math.toDegrees(positivifyAngle(k1)), Math.toDegrees(positivifyAngle(k2)) };
 	}
 
 	public static double positivifyAngle(double a) {
-		while (a < 0)
+		while (a+0.1 < 0)
 			a += Math.PI * 2;
 		return a;
 	}
@@ -66,5 +67,17 @@ public class KineMath {
 		double rx = x + Math.cos(angle) * r;
 		double ry = y - Math.sin(angle) * r;
 		return new double[] { rx, ry };
+	}
+	
+	public static double constrainAngle(double angle, double min, double max){
+		/**
+		 * constraints an angle to the given range, and return NaN if not possible;
+		 */
+		angle = positivifyAngle(angle);
+		if (angle > max)
+			angle -= 360;
+		if (angle < min)
+			return Double.NaN;
+		return angle;
 	}
 }

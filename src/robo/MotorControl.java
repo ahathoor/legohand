@@ -12,6 +12,9 @@ public class MotorControl {
 	int farspeed = 200;
 	int gearRatio = 3;
 	
+	double armFromSwiwel = 16;
+	double armFromOrigo = Math.sqrt(15*15+4*4);
+	
 	public MotorControl(MotorPort near, MotorPort far) {
 		mnear = new NXTRegulatedMotor(near);
 		mfar = new NXTRegulatedMotor(far);
@@ -29,7 +32,7 @@ public class MotorControl {
 	}
 	
 	public void moveTo(float x, float y, boolean immediateReturn) {
-		double[] angles = KineMath.etsikulmat(x, y);
+		double[] angles = KineMath.etsikulmat(new double[] {x,y}, armFromSwiwel, armFromOrigo);
 		rotateTo(angles[0], angles[1], immediateReturn);
 	}
 	public boolean isMoving() {
