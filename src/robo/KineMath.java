@@ -44,6 +44,14 @@ public class KineMath {
 		return Math.atan2(xy2[1] - xy1[1], xy2[0] - xy1[0]);
 	}
 
+	public static double[] etsikulmat(double[] xy, double armFromSwiwel, double armFromOrigo, double[] nearRange, double[] farRange) {
+		double[] a = etsikulmat(xy, armFromSwiwel, armFromOrigo);
+		a = new double[] {constrainAngle(a[0], nearRange),
+				constrainAngle(a[1], farRange)};
+		if(Double.isNaN(a[0]) || Double.isNaN(a[1]))
+			return null;
+		return a;
+	}
 	public static double[] etsikulmat(double[] xy, double armFromSwiwel, double armFromOrigo) {
 		
 		double[] betweenPoint = binSearchPointWithDist(xy, armFromSwiwel, armFromOrigo);
@@ -69,10 +77,12 @@ public class KineMath {
 		return new double[] { rx, ry };
 	}
 	
-	public static double constrainAngle(double angle, double min, double max){
+	public static double constrainAngle(double angle, double[] constraint){
 		/**
 		 * constraints an angle to the given range, and return NaN if not possible;
 		 */
+		double min = constraint[0];
+		double max = constraint[1];
 		angle = positivifyAngle(angle);
 		if (angle > max)
 			angle -= 360;

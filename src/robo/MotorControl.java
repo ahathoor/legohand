@@ -14,7 +14,7 @@ public class MotorControl {
 	int gearRatio = 3;
 
 	double armFromSwiwel = 16;
-	double armFromOrigo = Math.sqrt(15 * 15 + 4 * 4);
+	double armFromOrigo = Math.sqrt(17 * 17 + 4 * 4);
 	
 	double[] nearRange = {-160,130};
 	double[] farRange = {0,90};
@@ -37,10 +37,8 @@ public class MotorControl {
 
 	public void moveTo(float x, float y, boolean immediateReturn) {
 		double[] a = KineMath.etsikulmat(new double[] { x, y }, armFromSwiwel,
-				armFromOrigo);
-		a = new double[] { KineMath.constrainAngle(a[0], nearRange[0], nearRange[1]),
-				KineMath.constrainAngle(a[1], farRange[0], farRange[1]) };
-		if (Double.isNaN(a[0]) || Double.isNaN(a[1])) {
+				armFromOrigo, nearRange, farRange);
+		if (a == null) {
 			System.out.println("Point (" + x + "," + y + ") not reachable!");
 			Sound.beep();
 			Button.waitForPress();
