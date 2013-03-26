@@ -75,7 +75,7 @@ public class KineMath {
 			k2 = Math.toDegrees(angleBetween(betweenPoint, xy));
 			k2-=k1;
 		if(!fitsInRange(k1, nearRange) || !fitsInRange(k2, farRange))
-			return null;
+			return new double[] {Double.NaN, Double.NaN};
 		}
 		return new double[] {k1,k2};
 	}
