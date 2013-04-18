@@ -13,12 +13,15 @@ public class MotorControl {
 	int nearspeed = 300;
 	int farspeed = 300;
 	int gearRatio = 3;
+	private boolean penUp;
 
 	double armFromSwiwel = 11.3;
 	double armFromOrigo = 13.4;
 	
 	double[] nearRange = {-180,180};
 	double[] farRange = {-160,150};
+	
+	double[] xy = new double[2];
 
 	public MotorControl(MotorPort near, MotorPort far) {
 		mnear = new NXTRegulatedMotor(near);
@@ -32,11 +35,19 @@ public class MotorControl {
 	}
 	
 	public void liftPen() {
-		Motor.B.rotateTo(-200);
+		if (!penUp)
+			Motor.B.rotateTo(-200);
+		penUp = true;
 	}
 	public void lowerPen() {
-		Motor.B.rotateTo(0);
+		if (penUp)
+			Motor.B.rotateTo(0);
+		penUp = false;
 	}	
+	
+	public double[] getXy() {
+		return xy;
+	}
 
 	public void rotateTo(double near, double far, boolean immediateReturn) {
 		mnear.rotateTo(-(int) (near * gearRatio), true);
@@ -50,8 +61,11 @@ public class MotorControl {
 			System.out.println("Point (" + x + "," + y + ") not reachable!");
 			Sound.beep();
 			Button.waitForPress();
-		} else
+		} else {
 			rotateTo(a[0], a[1], immediateReturn);
+			xy[0] = x;
+			xy[1] = y;
+		}
 	}
 
 	public boolean isMoving() {
