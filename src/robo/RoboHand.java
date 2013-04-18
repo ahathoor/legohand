@@ -42,8 +42,8 @@ public class RoboHand {
 
 		MotorControl m = new MotorControl();
 		
-		m.drawLinemap(hello, -5,12);
-		
+		m.drawLinemap(hello, -10,12);
+		m.drawRect(-11, 11, -11+16, 12+7 , 2f);
 		m.lopeta();
 	}
 	public static void sisakkLaatikotDemo(MotorControl m) {

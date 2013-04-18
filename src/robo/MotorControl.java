@@ -10,10 +10,10 @@ public class MotorControl {
 
 	private NXTRegulatedMotor mnear;
 	private NXTRegulatedMotor mfar;
-	private int nearspeed = 100;
-	private int farspeed = 100;
+	private int nearspeed = 300;
+	private int farspeed = 300;
 	private int gearRatio = 3;
-	private boolean penUp;
+	private boolean penUp = false;
 
 	private double armFromSwiwel = 11.3;
 	private double armFromOrigo = 13.4;
@@ -36,7 +36,7 @@ public class MotorControl {
 	
 	public void liftPen() {
 		if (!penUp)
-			Motor.B.rotateTo(-200);
+			Motor.B.rotateTo(-230);
 		penUp = true;
 	}
 	public void lowerPen() {
@@ -112,8 +112,6 @@ public class MotorControl {
 		
 		float linelenght = (float) dist(x1,y1,x2,y2);
 		int pieces = Math.round((float)Math.ceil(linelenght/maxSegment));
-		if (pieces < 1)
-			pieces = 1;
 		
 		float deltax = x2-x1;
 		float deltay = y2-y1;
@@ -121,7 +119,7 @@ public class MotorControl {
 		float piecex = deltax / pieces;
 		float piecey = deltay / pieces;
 		
-		for(int i=0; i<=pieces; i++) {
+		for(int i=1; i<=pieces; i++) {
 			moveTo(x1+piecex*i,y1+piecey*i,false);
 		}
 		
