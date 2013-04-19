@@ -178,6 +178,8 @@ public class MotorControl {
 		
 		float linelenght = (float) dist(x1,y1,x2,y2);
 		int pieces = Math.round((float)Math.ceil(linelenght/maxSegment));
+		if(pieces<1)
+			pieces = 1;
 		
 		float deltax = x2-x1;
 		float deltay = y2-y1;
