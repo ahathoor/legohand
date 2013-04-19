@@ -32,7 +32,7 @@ public class MotorControl {
 		while(Math.abs(mpen.getPosition()-mpen.getTachoCount())<5) {
 			mpen.rotate(-20);
 		}
-		Sound.beep();
+		SoundSystem.note(SoundSystem.C4);
 		mpen.rotate(140);
 		mpen.resetTachoCount();
 		penUp = true;
@@ -46,9 +46,13 @@ public class MotorControl {
 			mnear.rotate(-20);
 		}
 
+		SoundSystem.note(SoundSystem.G4);
+
 		while(Math.abs(mfar.getPosition()-mfar.getTachoCount())<3) {
 			mfar.rotate(3);
 		}
+
+		SoundSystem.note(SoundSystem.C5);
 	}
 	private void calibrate_motor() {
 		gotoStartAngles();
@@ -147,7 +151,7 @@ public class MotorControl {
 	public void lopeta() {
 		liftPen();
 		rotateTo(-alkukulmat[0], -alkukulmat[1], false);
-		Util.fanfare();
+		SoundSystem.fanfare();
 		System.exit(0);
 	}
 	
@@ -186,7 +190,12 @@ public class MotorControl {
 		}
 		
 	}
-	
+	/**
+	 * Draws a polygon p to coordinates (x,y)
+	 * @param p
+	 * @param x
+	 * @param y
+	 */
 	public void drawPolygon(Polygon p, float x, float y) {
 		float[][] points = p.getPoints();
 		for(int i = 0; i<points.length; i++) {
@@ -198,6 +207,11 @@ public class MotorControl {
 				p2 = points[i+1];
 			float scale = 0.3f;
 			drawLine(x+p1[0]*scale,y+p1[1]*scale, x+p2[0]*scale,y+p2[1]*scale, 0.5f);
+		}
+	}
+	public void drawPolyArray(Polygon[] pc, float x, float y) {
+		for (Polygon p : pc)  {
+			drawPolygon(p, x, y);
 		}
 	}
 	/** 
