@@ -1,7 +1,6 @@
 package robo;
 
 import lejos.nxt.Button;
-import lejos.nxt.Motor;
 import lejos.nxt.MotorPort;
 import lejos.nxt.NXTRegulatedMotor;
 import lejos.nxt.Sound;
@@ -10,38 +9,85 @@ public class MotorControl {
 
 	private NXTRegulatedMotor mnear;
 	private NXTRegulatedMotor mfar;
+	private NXTRegulatedMotor mpen;
 	private int nearspeed = 300;
 	private int farspeed = 300;
 	private int gearRatio = 3;
 	private boolean penUp = false;
 
-	private double armFromSwiwel = 11.3;
+	private double armFromSwiwel = 11.6;
 	private double armFromOrigo = 13.4;
 	
-	private double[] nearRange = {-180,180};
-	private double[] farRange = {-160,150};
+	private double[] nearRange = {0,220};
+	private double[] farRange = {-150,160};
+	
+	private int[] alkukulmat = {-180-40,160};
 	
 	private double[] xy = new double[2];
 
-	public MotorControl(MotorPort near, MotorPort far) {
-		mnear = new NXTRegulatedMotor(near);
-		mfar = new NXTRegulatedMotor(far);
+	
+	public void calibrate_pen() {
+		while(Math.abs(mpen.getPosition()-mpen.getTachoCount())<5) {
+			mpen.rotate(-20);
+		}
+		Sound.beep();
+		mpen.rotate(170);
+		mpen.resetTachoCount();
+		penUp = true;
+	}
+	
+	public void gotoStartAngles() {
+
+		mnear.setSpeed(100);
+		mfar.setSpeed(100);
+		while(Math.abs(mnear.getPosition()-mnear.getTachoCount())<5) {
+			mnear.rotate(-20);
+		}
+
+		while(Math.abs(mfar.getPosition()-mfar.getTachoCount())<3) {
+			mfar.rotate(8);
+		}
+	}
+	public void calibrate_motor() {
+//		gotoStartAngles();
+		
 		mnear.setSpeed(nearspeed);
 		mfar.setSpeed(farspeed);
+		mnear.setAcceleration(600);
+		mnear.setAcceleration(600);
+		
+
+		mnear.resetTachoCount();
+		mfar.resetTachoCount();
+		liftPen();
+		mnear.rotateTo(-alkukulmat[0]*gearRatio,true);
+		mfar.rotateTo(-alkukulmat[1]*gearRatio,false);
+		mnear.resetTachoCount();
+		mfar.resetTachoCount();
+	}
+	public MotorControl(MotorPort near, MotorPort far, MotorPort pen) {
+		mnear = new NXTRegulatedMotor(near);
+		mfar = new NXTRegulatedMotor(far);
+		mpen = new NXTRegulatedMotor(pen);
+		
+		calibrate_pen();
+		calibrate_motor();
 	}
 
 	public MotorControl() {
-		this(MotorPort.A, MotorPort.C);
+		this(MotorPort.A, MotorPort.C, MotorPort.B);
 	}
 	
 	public void liftPen() {
 		if (!penUp)
-			Motor.B.rotateTo(-230);
+			mpen.rotateTo(0,false);
 		penUp = true;
 	}
 	public void lowerPen() {
+		while(mnear.isMoving() || mfar.isMoving())
+			;
 		if (penUp)
-			Motor.B.rotateTo(0);
+			mpen.rotateTo(230,false);
 		penUp = false;
 	}	
 	
@@ -82,10 +128,12 @@ public class MotorControl {
 		}
 	}
 	
+	/**
+	 * Siirtää kynän alkukulmaan ja lopettaa suorituksen
+	 */
 	public void lopeta() {
 		liftPen();
-		rotateTo(0, 0, false);
-		lowerPen();
+		rotateTo(-alkukulmat[0], -alkukulmat[1], false);
 		System.exit(0);
 	}
 	
@@ -93,13 +141,13 @@ public class MotorControl {
 		return Math.sqrt((x1-x2)*(x1-x2) + (y1-y2)*(y1-y2));
 	}
 	/**
-	 * 
+	 * Piirtää viivan pisteestä (x1,y1) pisteeseen (x2,y2)
 	 * @param m 
 	 * @param x1 
 	 * @param y1
 	 * @param x2
 	 * @param y2
-	 * @param maxSegment how long the 
+	 * @param maxSegment enintään kuinka pitkän liikkeen kerrallaan viiva piirretään
 	 */
 	public void drawLine(float x1, float y1, float x2, float y2, float maxSegment) {
 		if (dist(getXy()[0], getXy()[1], x1, y1)<0.2) //jos lähtöpiste on kovin lähellä kynän nykyistä sijaintia
@@ -124,6 +172,15 @@ public class MotorControl {
 		}
 		
 	}
+	
+	/** 
+	 * Piirtää suorakaiteen pisteestä (x1,y1) pisteeseen (x2,y2) käyttäen enintään step -pituisia viivoja
+	 * @param x1
+	 * @param y1
+	 * @param x2
+	 * @param y2
+	 * @param step
+	 */
 	public void drawRect(float x1, float y1, float x2, float y2, float step) {
 		drawLine(x1,y1,x1,y2, step);
 		drawLine(x1,y2,x2,y2, step);

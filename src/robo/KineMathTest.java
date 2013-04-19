@@ -146,12 +146,6 @@ public class KineMathTest {
 		assertEqual("Particular test case e", 158, ang[0], 1);
 		assertEqual("Particular test case e'",-158, ang[1], 1);
 		
-
-		p = new double[] { 20, 20 };
-		ang = KineMath.etsikulmat(p, armFromSwiwel, armFromOrigo, nearRange,
-				farRange);
-		assertEqual("Particular test case f", 158, ang[0], 1);
-		assertEqual("Particular test case f'",-158, ang[1], 1);
 	}
 
 	public void testBinSearchStraightUp() {
