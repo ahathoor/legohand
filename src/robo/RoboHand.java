@@ -42,7 +42,9 @@ public class RoboHand {
 
 		MotorControl m = new MotorControl();
 		
-		m.drawLinemap(hello, -7,12);
+		MonaLisa.draw(m, 0, 11);
+		m.lopeta();
+		m.drawLinemap(hello, -7,10);
 		m.drawRect(-8, 11, -8+17, 11+8 , 0.5f);
 		m.lopeta();
 	}

@@ -21,22 +21,24 @@ public class MotorControl {
 	private double[] nearRange = {0,220};
 	private double[] farRange = {-150,160};
 	
-	private int[] alkukulmat = {-180-40,160};
+	private int[] alkukulmat = {-180-50,165};
 	
 	private double[] xy = new double[2];
 
-	
+	/**
+	 * Ajaa kynän alkuasentoonsa käyden ensin maksimiasennossa ja nollaa kynän takometrin
+	 */
 	public void calibrate_pen() {
 		while(Math.abs(mpen.getPosition()-mpen.getTachoCount())<5) {
 			mpen.rotate(-20);
 		}
 		Sound.beep();
-		mpen.rotate(170);
+		mpen.rotate(140);
 		mpen.resetTachoCount();
 		penUp = true;
 	}
 	
-	public void gotoStartAngles() {
+	private void gotoStartAngles() {
 
 		mnear.setSpeed(100);
 		mfar.setSpeed(100);
@@ -45,11 +47,11 @@ public class MotorControl {
 		}
 
 		while(Math.abs(mfar.getPosition()-mfar.getTachoCount())<3) {
-			mfar.rotate(8);
+			mfar.rotate(3);
 		}
 	}
-	public void calibrate_motor() {
-//		gotoStartAngles();
+	private void calibrate_motor() {
+		gotoStartAngles();
 		
 		mnear.setSpeed(nearspeed);
 		mfar.setSpeed(farspeed);
@@ -60,11 +62,17 @@ public class MotorControl {
 		mnear.resetTachoCount();
 		mfar.resetTachoCount();
 		liftPen();
-		mnear.rotateTo(-alkukulmat[0]*gearRatio,true);
-		mfar.rotateTo(-alkukulmat[1]*gearRatio,false);
+		mfar.rotateTo(-alkukulmat[1]*gearRatio,true);
+		mnear.rotateTo(-alkukulmat[0]*gearRatio,false);
 		mnear.resetTachoCount();
 		mfar.resetTachoCount();
 	}
+	/**
+	 * Luo uuden moottorin
+	 * @param near lähimmän moottorin portti
+	 * @param far kauemman moottorin portti
+	 * @param pen kynän nostajan portti
+	 */
 	public MotorControl(MotorPort near, MotorPort far, MotorPort pen) {
 		mnear = new NXTRegulatedMotor(near);
 		mfar = new NXTRegulatedMotor(far);
@@ -77,12 +85,17 @@ public class MotorControl {
 	public MotorControl() {
 		this(MotorPort.A, MotorPort.C, MotorPort.B);
 	}
-	
+	/**
+	 * Nostaa kynän
+	 */
 	public void liftPen() {
 		if (!penUp)
 			mpen.rotateTo(0,false);
 		penUp = true;
 	}
+	/**
+	 * Laskee kynän
+	 */
 	public void lowerPen() {
 		while(mnear.isMoving() || mfar.isMoving())
 			;
@@ -134,6 +147,7 @@ public class MotorControl {
 	public void lopeta() {
 		liftPen();
 		rotateTo(-alkukulmat[0], -alkukulmat[1], false);
+		Util.fanfare();
 		System.exit(0);
 	}
 	
@@ -173,6 +187,19 @@ public class MotorControl {
 		
 	}
 	
+	public void drawPolygon(Polygon p, float x, float y) {
+		float[][] points = p.getPoints();
+		for(int i = 0; i<points.length; i++) {
+			float[] p1 = points[i];
+			float[] p2;
+			if (i == points.length-1)
+				p2 = points[0];
+			else
+				p2 = points[i+1];
+			float scale = 0.3f;
+			drawLine(x+p1[0]*scale,y+p1[1]*scale, x+p2[0]*scale,y+p2[1]*scale, 0.5f);
+		}
+	}
 	/** 
 	 * Piirtää suorakaiteen pisteestä (x1,y1) pisteeseen (x2,y2) käyttäen enintään step -pituisia viivoja
 	 * @param x1
